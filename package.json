@@ -22,6 +22,7 @@
     "prebuild": "npm run clean",
     "build": "bili",
     "clean": "rimraf lib/*",
+    "prepack": "npm run build",
     "test": "jest"
   },
   "dependencies": {
