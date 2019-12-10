@@ -13,12 +13,10 @@ type Version = MigrationInfo['version']
 const readFile = promisify(fsReadFile)
 const readDir = promisify(fsReadDir)
 
-type FileSourceEngine = SourceEngine
-
 export const FileSourceEngine: SourceEngineFactory = (
   uri,
   { migrationInfoParser }
-): FileSourceEngine => {
+): SourceEngine => {
   const { pathname } = new URL(uri)
 
   const migrationsByVersion: Record<
@@ -28,7 +26,7 @@ export const FileSourceEngine: SourceEngineFactory = (
 
   const sortedVersions: Version[] = []
 
-  const open: FileSourceEngine['open'] = async () => {
+  const open: SourceEngine['open'] = async () => {
     const filenames = await readDir(pathname, { withFileTypes: true })
       .then(entries => entries.filter(entry => entry.isFile()))
       .then(entries => entries.map(entry => entry.name))
@@ -47,16 +45,16 @@ export const FileSourceEngine: SourceEngineFactory = (
     sortedVersions.push(...versions)
   }
 
-  const close: FileSourceEngine['close'] = async () => {
+  const close: SourceEngine['close'] = async () => {
     return Promise.resolve()
   }
 
-  const first: FileSourceEngine['first'] = async () => {
+  const first: SourceEngine['first'] = async () => {
     const version = sortedVersions[0]
     return Promise.resolve(version || null)
   }
 
-  const prev: FileSourceEngine['prev'] = async version => {
+  const prev: SourceEngine['prev'] = async version => {
     const index = sortedVersions.indexOf(version)
     const exists = index !== -1
     const first = index === 0
@@ -70,7 +68,7 @@ export const FileSourceEngine: SourceEngineFactory = (
     return Promise.resolve(prevVersion)
   }
 
-  const next: FileSourceEngine['next'] = async version => {
+  const next: SourceEngine['next'] = async version => {
     const index = sortedVersions.indexOf(version)
     const exists = index !== -1
     const last = index === sortedVersions.length - 1
@@ -84,17 +82,17 @@ export const FileSourceEngine: SourceEngineFactory = (
     return Promise.resolve(nextVersion)
   }
 
-  const last: FileSourceEngine['last'] = async () => {
+  const last: SourceEngine['last'] = async () => {
     const version = sortedVersions[sortedVersions.length - 1]
     return Promise.resolve(version || null)
   }
 
-  const read: FileSourceEngine['read'] = async ({ filename }) => {
+  const read: SourceEngine['read'] = async ({ filename }) => {
     const migrationFilePath = joinPath(pathname, filename)
     return readFile(migrationFilePath)
   }
 
-  const get: FileSourceEngine['get'] = async (version, type) => {
+  const get: SourceEngine['get'] = async (version, type) => {
     const migrations = migrationsByVersion[version]
 
     if (!migrations) {
@@ -121,3 +119,5 @@ export const FileSourceEngine: SourceEngineFactory = (
     read
   }
 }
+
+export default FileSourceEngine
