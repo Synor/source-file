@@ -1,6 +1,6 @@
 {
   "name": "@synor/source-file",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Synor Source Engine - File",
   "keywords": [
     "synor",
@@ -52,5 +52,8 @@
     "ts-jest": "^24.1.0",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
