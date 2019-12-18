@@ -1,5 +1,5 @@
 import { sortVersions, SynorError } from '@synor/core'
-import { readdir as fsReadDir, readFile as fsReadFile } from 'fs'
+import { lstatSync, readdir as fsReadDir, readFile as fsReadFile } from 'fs'
 import { join as joinPath } from 'path'
 import { promisify } from 'util'
 import { getEngineConfig } from './utils/get-engine-config'
@@ -32,9 +32,12 @@ export const FileSourceEngine: SourceEngineFactory = (
   const sortedVersions: Version[] = []
 
   const open: SourceEngine['open'] = async () => {
-    const filenames = await readDir(pathname, { withFileTypes: true })
-      .then(entries => entries.filter(entry => entry.isFile()))
-      .then(entries => entries.map(entry => entry.name))
+    const filenames = await readDir(pathname).then(filenames =>
+      filenames.filter(filename => {
+        const filepath = joinPath(pathname, filename)
+        return lstatSync(filepath).isFile()
+      })
+    )
 
     for (const filename of filenames) {
       const migrationInfo = migrationInfoParser(filename)
