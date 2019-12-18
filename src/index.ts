@@ -1,7 +1,8 @@
-import { sortVersions } from '@synor/core'
+import { sortVersions, SynorError } from '@synor/core'
 import { readdir as fsReadDir, readFile as fsReadFile } from 'fs'
 import { join as joinPath } from 'path'
 import { promisify } from 'util'
+import { getEngineConfig } from './utils/get-engine-config'
 
 type MigrationInfo = import('@synor/core').MigrationInfo
 type SourceEngine = import('@synor/core').SourceEngine
@@ -17,7 +18,11 @@ export const FileSourceEngine: SourceEngineFactory = (
   uri,
   { migrationInfoParser }
 ): SourceEngine => {
-  const { pathname } = new URL(uri)
+  const { pathname } = getEngineConfig(uri)
+
+  if (typeof migrationInfoParser !== 'function') {
+    throw new SynorError(`Missing: migrationInfoParser`)
+  }
 
   const migrationsByVersion: Record<
     Version,
@@ -87,11 +92,6 @@ export const FileSourceEngine: SourceEngineFactory = (
     return Promise.resolve(version || null)
   }
 
-  const read: SourceEngine['read'] = async ({ filename }) => {
-    const migrationFilePath = joinPath(pathname, filename)
-    return readFile(migrationFilePath)
-  }
-
   const get: SourceEngine['get'] = async (version, type) => {
     const migrations = migrationsByVersion[version]
 
@@ -106,6 +106,11 @@ export const FileSourceEngine: SourceEngineFactory = (
     }
 
     return Promise.resolve(migrationInfo)
+  }
+
+  const read: SourceEngine['read'] = async ({ filename }) => {
+    const migrationFilePath = joinPath(pathname, filename)
+    return readFile(migrationFilePath)
   }
 
   return {
