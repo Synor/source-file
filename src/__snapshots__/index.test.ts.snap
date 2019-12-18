@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`methods get (if exists) 1`] = `
+Object {
+  "filename": "001--do--one.sql",
+  "title": "one.sql",
+  "type": "do",
+  "version": "001",
+}
+`;
+
+exports[`methods get (if not exists: type) 1`] = `null`;
+
+exports[`methods get (if not exists: version) 1`] = `null`;
+
+exports[`methods next (if exists) 1`] = `"002"`;
+
+exports[`methods next (if not exists) 1`] = `null`;
+
+exports[`methods prev (if exists) 1`] = `"002"`;
+
+exports[`methods prev (if not exists) 1`] = `null`;
+
+exports[`methods read (if exists) 1`] = `
+Object {
+  "data": Array [
+    83,
+    69,
+    76,
+    69,
+    67,
+    84,
+    32,
+    43,
+    49,
+    59,
+  ],
+  "type": "Buffer",
+}
+`;
