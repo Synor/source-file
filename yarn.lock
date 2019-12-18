@@ -894,10 +894,10 @@
   dependencies:
     any-observable "^0.3.0"
 
-"@synor/core@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@synor/core/-/core-0.1.0.tgz#2ae6a66c5298923595ebea0bf2dcbc83f088b0ff"
-  integrity sha512-sZCWTkD6gxjAewaG2XuiADDk3pI5dlP87aKM2CMQysrVU+pwxF7Z9OdLg7wgcX7g1zoIp4Va7CRNy4G21mv1OA==
+"@synor/core@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@synor/core/-/core-0.3.0.tgz#28687423cc1c54d90b912e530a85e2f1bbb60c14"
+  integrity sha512-PnGokxMEl7IJFAYZhkgIHAeXIGGmpZt/Z+RUH+MBE992Yb2G0avPa9/ibS8ipsM++lZoVzi9kvSMibv5TxLuSQ==
   dependencies:
     debug "^4.1.1"
     lodash.defaultsdeep "^4.6.1"
