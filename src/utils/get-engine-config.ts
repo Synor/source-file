@@ -1,6 +1,7 @@
 import { SynorError } from '@synor/core'
 import { statSync } from 'fs'
 import { resolve } from 'path'
+import { URL } from 'url'
 
 type FileSourceEngineConfig = {
   pathname: string
