@@ -2,7 +2,7 @@ import { sortVersions, SynorError } from '@synor/core'
 import { lstatSync, readdir as fsReadDir, readFile as fsReadFile } from 'fs'
 import { join as joinPath } from 'path'
 import { promisify } from 'util'
-import { getEngineConfig } from './utils/get-engine-config'
+import { getConfig } from './utils/get-config'
 
 type MigrationInfo = import('@synor/core').MigrationInfo
 type SourceEngine = import('@synor/core').SourceEngine
@@ -18,7 +18,7 @@ export const FileSourceEngine: SourceEngineFactory = (
   uri,
   { migrationInfoParser }
 ): SourceEngine => {
-  const { pathname } = getEngineConfig(uri)
+  const { sourceConfig } = getConfig(uri)
 
   if (typeof migrationInfoParser !== 'function') {
     throw new SynorError(`Missing: migrationInfoParser`)
@@ -32,9 +32,9 @@ export const FileSourceEngine: SourceEngineFactory = (
   const sortedVersions: Version[] = []
 
   const open: SourceEngine['open'] = async () => {
-    const filenames = await readDir(pathname).then(filenames =>
+    const filenames = await readDir(sourceConfig.pathname).then(filenames =>
       filenames.filter(filename => {
-        const filepath = joinPath(pathname, filename)
+        const filepath = joinPath(sourceConfig.pathname, filename)
         return lstatSync(filepath).isFile()
       })
     )
@@ -112,7 +112,7 @@ export const FileSourceEngine: SourceEngineFactory = (
   }
 
   const read: SourceEngine['read'] = async ({ filename }) => {
-    const migrationFilePath = joinPath(pathname, filename)
+    const migrationFilePath = joinPath(sourceConfig.pathname, filename)
     return readFile(migrationFilePath)
   }
 

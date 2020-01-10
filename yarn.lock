@@ -1806,6 +1806,11 @@ concat-with-sourcemaps@^1.0.5:
   dependencies:
     source-map "^0.6.1"
 
+connection-string@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/connection-string/-/connection-string-3.1.0.tgz#459ac5cf04eb239ee179506c630be8ed3265218a"
+  integrity sha512-Gy+QoTYc09PqsrRoOZyKUYWL73ug/afVvQfRA3C5XIoYlm3TTUBAwjvOOP3AlGF3FHnZGY+nS98uKFjcj8RrPA==
+
 console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
