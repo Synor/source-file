@@ -1,12 +1,14 @@
+/**
+ * @migrations-dir __fs__/index
+ */
+
 import fs from 'fs'
 import path from 'path'
 import FSEngine, { FileSourceEngine } from './index'
 
 type MigrationInfoParser = import('@synor/core').MigrationInfoParser
 
-const rootPath = path.resolve()
-const migrationsPathAbs = path.resolve('__fs__')
-const migrationsPathRel = path.relative(rootPath, '__fs__')
+const migrationsPathAbs = path.resolve('__fs__/index')
 
 const migrationFiles: Record<string, string> = {
   '001--do--one.sql': 'SELECT +1;',
@@ -30,7 +32,6 @@ const migrationInfoParser: MigrationInfoParser = filename => {
 }
 
 beforeAll(() => {
-  fs.mkdirSync(migrationsPathAbs)
   for (const [filename, body] of Object.entries(migrationFiles)) {
     fs.writeFileSync(path.join(migrationsPathAbs, filename), body)
   }
@@ -40,7 +41,6 @@ afterAll(() => {
   for (const filename of Object.keys(migrationFiles)) {
     fs.unlinkSync(path.join(migrationsPathAbs, filename))
   }
-  fs.rmdirSync(migrationsPathAbs)
 })
 
 describe('module exports', () => {
@@ -58,76 +58,36 @@ describe('module exports', () => {
 })
 
 describe('initialization', () => {
-  let uri: Parameters<typeof FileSourceEngine>[0]
+  let srcUri: Parameters<typeof FileSourceEngine>[0]
   const helpers: Parameters<typeof FileSourceEngine>[1] = {
     migrationInfoParser
   }
-
-  beforeEach(() => {
-    uri = ''
-    helpers.migrationInfoParser = migrationInfoParser
-  })
-
-  test(`accepts uri with absolute path: ${`file://${migrationsPathAbs}`}`, () => {
-    uri = `file://${migrationsPathAbs}`
-    expect(() => FileSourceEngine(uri, helpers)).not.toThrow()
-  })
-
-  test(`accepts uri with relative path: ${`file://./${migrationsPathRel}`}`, () => {
-    uri = `file://./${migrationsPathRel}`
-    expect(() => FileSourceEngine(uri, helpers)).not.toThrow()
-  })
 
   test.each([undefined, null, 0])('throws if uri is %s', uri => {
     expect(() => FileSourceEngine(uri as any, helpers)).toThrow()
   })
 
   test('throws if uri is empty', () => {
-    uri = ' '
-    expect(() => FileSourceEngine(uri, helpers)).toThrow()
-  })
-
-  test('throws if uri is malformed', () => {
-    uri = 'file://username@password:hostname/migrations'
-    expect(() => FileSourceEngine(uri, helpers)).toThrow()
-
-    uri = 'file://hostname/migrations'
-    expect(() => FileSourceEngine(uri, helpers)).toThrow()
-  })
-
-  test(`throws if uri protocol is not 'file:'`, () => {
-    uri = 'ftp:///migrations'
-    expect(() => FileSourceEngine(uri, helpers)).toThrow()
-  })
-
-  test(`throws if uri has non-existent path`, () => {
-    uri = `ftp://${migrationsPathAbs}__`
-    expect(() => FileSourceEngine(uri, helpers)).toThrow()
-    uri = `ftp://./${migrationsPathRel}__`
-    expect(() => FileSourceEngine(uri, helpers)).toThrow()
-  })
-
-  test(`throws if uri has non-directory path`, () => {
-    uri = `file://${migrationsPathAbs}/001--do--one.sql`
-    expect(() => FileSourceEngine(uri, helpers)).toThrow()
+    srcUri = ' '
+    expect(() => FileSourceEngine(srcUri, helpers)).toThrow()
   })
 
   describe('helpers validation', () => {
     beforeEach(() => {
-      uri = `file://${migrationsPathAbs}`
+      srcUri = `file://${migrationsPathAbs}`
       helpers.migrationInfoParser = migrationInfoParser
     })
 
     test(`throws if migrationInfoParser is missing`, () => {
       delete helpers.migrationInfoParser
-      expect(() => FileSourceEngine(uri, helpers)).toThrow()
+      expect(() => FileSourceEngine(srcUri, helpers)).toThrow()
     })
 
     test(`throws if migrationInfoParser is not function`, () => {
       helpers.migrationInfoParser = '' as any
-      expect(() => FileSourceEngine(uri, helpers)).toThrow()
+      expect(() => FileSourceEngine(srcUri, helpers)).toThrow()
       helpers.migrationInfoParser = null as any
-      expect(() => FileSourceEngine(uri, helpers)).toThrow()
+      expect(() => FileSourceEngine(srcUri, helpers)).toThrow()
     })
   })
 })
