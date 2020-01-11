@@ -52,6 +52,6 @@ export function getConfig(
       sourceConfig
     }
   } catch (error) {
-    throw new SynorError('Invalid SourceURI', error)
+    throw new SynorError('Invalid SourceURI', 'exception', error)
   }
 }
