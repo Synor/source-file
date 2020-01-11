@@ -20,9 +20,19 @@ npm install --save @synor/source-file
 
 ## URI
 
-**Absolute path**: `file:///path/to/directory`
+**Format**: `file://[.]/path[?param=value&...]`
 
-**Relative path**: `file://./path/to/directory`
+**Params**:
+
+| Name                      | Description                                 | Default Value |
+| ------------------------- | ------------------------------------------- | ------------- |
+| `ignore_invalid_filename` | Flag for ignoring `invalid_filename` errors | `true`        |
+
+**Examples**:
+
+- `file:///path/to/directory` (Absolute path)
+- `file://./path/to/directory` (Relative path)
+- `file:///path/to/directory?ignore_invalid_filename=false` (Throws `invalid_filename` error)
 
 ## License
 
