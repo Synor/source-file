@@ -26,6 +26,17 @@ describe('utils:getConfig', () => {
     expect(getConfig(uri).sourceConfig.pathname).toBe(migrationsPathAbs)
   })
 
+  test(`accepts ignore_invalid_filename param`, () => {
+    uri = `file://${migrationsPathAbs}`
+    expect(getConfig(uri).engineConfig.ignoreInvalidFilename).toBe(true)
+
+    uri = `file://${migrationsPathAbs}?ignore_invalid_filename=true`
+    expect(getConfig(uri).engineConfig.ignoreInvalidFilename).toBe(true)
+
+    uri = `file://${migrationsPathAbs}?ignore_invalid_filename=false`
+    expect(getConfig(uri).engineConfig.ignoreInvalidFilename).toBe(false)
+  })
+
   test('throws if uri is malformed', () => {
     uri = 'file://username@password:hostname/migrations'
     expect(() => getConfig(uri)).toThrow()

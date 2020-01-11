@@ -2,6 +2,7 @@
  * @migrations-dir __fs__/index
  */
 
+import { SynorError } from '@synor/core'
 import fs from 'fs'
 import path from 'path'
 import FSEngine, { FileSourceEngine } from './index'
@@ -158,5 +159,44 @@ describe('methods', () => {
 
   test('close', async () => {
     await expect(engine.close()).resolves.toBeUndefined()
+  })
+})
+
+describe('#2 invalid_filename error handling', () => {
+  const patchedMigrationInfoParser: MigrationInfoParser = filename => {
+    const info = migrationInfoParser(filename)
+
+    if (info.version === '003') {
+      throw new SynorError(
+        `Invalid Filename: ${filename}`,
+        'invalid_filename',
+        { filename }
+      )
+    }
+
+    return info
+  }
+
+  test('ignore_invalid_filename=true', async () => {
+    const engine = FileSourceEngine(
+      `file://${migrationsPathAbs}?ignore_invalid_filename=true`,
+      { migrationInfoParser: patchedMigrationInfoParser }
+    )
+
+    await expect(engine.open()).resolves.toBeUndefined()
+  })
+
+  test('ignore_invalid_filename=false', async () => {
+    const engine = FileSourceEngine(
+      `file://${migrationsPathAbs}?ignore_invalid_filename=false`,
+      { migrationInfoParser: patchedMigrationInfoParser }
+    )
+
+    try {
+      await engine.open()
+    } catch (error) {
+      expect(error).toBeInstanceOf(SynorError)
+      expect(error.type).toMatchInlineSnapshot(`"invalid_filename"`)
+    }
   })
 })
