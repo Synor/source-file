@@ -7,7 +7,9 @@ type FileSourceConfig = {
   pathname: string
 }
 
-type FileEngineConfig = {}
+type FileEngineConfig = {
+  ignoreInvalidFilename: boolean
+}
 
 const validHost = ['', '.']
 
@@ -15,7 +17,16 @@ export function getConfig(
   uri: string
 ): { engineConfig: FileEngineConfig; sourceConfig: FileSourceConfig } {
   try {
-    const { protocol, hostname: host = '', path } = new ConnectionString(uri)
+    const {
+      protocol,
+      hostname: host = '',
+      path,
+      params
+    } = new ConnectionString(uri, {
+      params: {
+        ignore_invalid_filename: true
+      }
+    })
 
     if (!protocol) {
       throw new Error(`[URI] missing: protocol!`)
@@ -41,7 +52,9 @@ export function getConfig(
       throw new SynorError(`Directory(${pathname}) does not exist!`)
     }
 
-    const engineConfig: FileEngineConfig = {}
+    const engineConfig: FileEngineConfig = {
+      ignoreInvalidFilename: JSON.parse(params!.ignore_invalid_filename)
+    }
 
     const sourceConfig: FileSourceConfig = {
       pathname

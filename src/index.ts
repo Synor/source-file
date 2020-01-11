@@ -1,4 +1,5 @@
-import { sortVersions, SynorError } from '@synor/core'
+import { isSynorError, sortVersions, SynorError } from '@synor/core'
+import Debug from 'debug'
 import { lstatSync, readdir as fsReadDir, readFile as fsReadFile } from 'fs'
 import { join as joinPath } from 'path'
 import { promisify } from 'util'
@@ -11,6 +12,8 @@ type SourceEngineFactory = import('@synor/core').SourceEngineFactory
 type Type = MigrationInfo['type']
 type Version = MigrationInfo['version']
 
+const debug = Debug('@synor/source-filename')
+
 const readFile = promisify(fsReadFile)
 const readDir = promisify(fsReadDir)
 
@@ -18,7 +21,7 @@ export const FileSourceEngine: SourceEngineFactory = (
   uri,
   { migrationInfoParser }
 ): SourceEngine => {
-  const { sourceConfig } = getConfig(uri)
+  const { engineConfig, sourceConfig } = getConfig(uri)
 
   if (typeof migrationInfoParser !== 'function') {
     throw new SynorError(`Missing: migrationInfoParser`)
@@ -40,11 +43,22 @@ export const FileSourceEngine: SourceEngineFactory = (
     )
 
     for (const filename of filenames) {
-      const migrationInfo = migrationInfoParser(filename)
+      try {
+        const migrationInfo = migrationInfoParser(filename)
 
-      migrationsByVersion[migrationInfo.version] = {
-        ...migrationsByVersion[migrationInfo.version],
-        [migrationInfo.type]: migrationInfo
+        migrationsByVersion[migrationInfo.version] = {
+          ...migrationsByVersion[migrationInfo.version],
+          [migrationInfo.type]: migrationInfo
+        }
+      } catch (error) {
+        if (
+          engineConfig.ignoreInvalidFilename &&
+          isSynorError(error, 'invalid_filename')
+        ) {
+          debug('Ignoring invalid_filename error: %O', error)
+        } else {
+          throw error
+        }
       }
     }
 
