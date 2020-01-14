@@ -111,19 +111,27 @@ describe('methods', () => {
   })
 
   test('prev (if exists)', async () => {
-    await expect(engine.prev(lastVersion)).resolves.toMatchSnapshot()
+    await expect(engine.prev(lastVersion)).resolves.toMatchInlineSnapshot(
+      `"002"`
+    )
   })
 
   test('prev (if not exists)', async () => {
-    await expect(engine.prev(firstVersion)).resolves.toMatchSnapshot()
+    await expect(engine.prev(firstVersion)).resolves.toMatchInlineSnapshot(
+      `null`
+    )
   })
 
   test('next (if exists)', async () => {
-    await expect(engine.next(firstVersion)).resolves.toMatchSnapshot()
+    await expect(engine.next(firstVersion)).resolves.toMatchInlineSnapshot(
+      `"002"`
+    )
   })
 
   test('next (if not exists)', async () => {
-    await expect(engine.next(lastVersion)).resolves.toMatchSnapshot()
+    await expect(engine.next(lastVersion)).resolves.toMatchInlineSnapshot(
+      `null`
+    )
   })
 
   test('last', async () => {
@@ -131,20 +139,46 @@ describe('methods', () => {
   })
 
   test('get (if exists)', async () => {
-    await expect(engine.get(firstVersion, 'do')).resolves.toMatchSnapshot()
+    await expect(engine.get(firstVersion, 'do')).resolves
+      .toMatchInlineSnapshot(`
+            Object {
+              "filename": "001--do--one.sql",
+              "title": "one.sql",
+              "type": "do",
+              "version": "001",
+            }
+          `)
   })
 
   test('get (if not exists: version)', async () => {
-    await expect(engine.get('999', 'do')).resolves.toMatchSnapshot()
+    await expect(engine.get('999', 'do')).resolves.toMatchInlineSnapshot(`null`)
   })
 
   test('get (if not exists: type)', async () => {
-    await expect(engine.get(lastVersion, 'undo')).resolves.toMatchSnapshot()
+    await expect(
+      engine.get(lastVersion, 'undo')
+    ).resolves.toMatchInlineSnapshot(`null`)
   })
 
   test('read (if exists)', async () => {
     const info = await engine.get(firstVersion, 'do')
-    await expect(engine.read(info!)).resolves.toMatchSnapshot()
+    await expect(engine.read(info!)).resolves.toMatchInlineSnapshot(`
+            Object {
+              "data": Array [
+                83,
+                69,
+                76,
+                69,
+                67,
+                84,
+                32,
+                43,
+                49,
+                59,
+              ],
+              "type": "Buffer",
+            }
+          `)
   })
 
   test('read (if not exists)', async () => {
