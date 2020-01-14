@@ -16,11 +16,12 @@ const migrationFiles: Record<string, string> = {
   '001--undo--one.sql': 'SELECT -1;',
   '002--do--two.sql': 'SELECT +2;',
   '002--undo--two.sql': 'SELECT -2;',
-  '003--do--three.sql': 'SELECT +3;'
+  '003--do--three.sql': 'SELECT +3;',
+  '004--do--four.js': `module.exports = { get body() { return Promise.resolve('SELECT +4;') } }`
 }
 
 const firstVersion = '001'
-const lastVersion = '003'
+const lastVersion = '004'
 
 const migrationInfoParser: MigrationInfoParser = filename => {
   const [version, type, title] = filename.split('--')
@@ -112,7 +113,7 @@ describe('methods', () => {
 
   test('prev (if exists)', async () => {
     await expect(engine.prev(lastVersion)).resolves.toMatchInlineSnapshot(
-      `"002"`
+      `"003"`
     )
   })
 
@@ -162,23 +163,14 @@ describe('methods', () => {
 
   test('read (if exists)', async () => {
     const info = await engine.get(firstVersion, 'do')
-    await expect(engine.read(info!)).resolves.toMatchInlineSnapshot(`
-            Object {
-              "data": Array [
-                83,
-                69,
-                76,
-                69,
-                67,
-                84,
-                32,
-                43,
-                49,
-                59,
-              ],
-              "type": "Buffer",
-            }
-          `)
+    const content = await engine.read(info!)
+    expect(content.toString()).toMatchInlineSnapshot(`"SELECT +1;"`)
+  })
+
+  test('#1 read (if exists ; javascript file)', async () => {
+    const info = await engine.get(lastVersion, 'do')
+    const content = await engine.read(info!)
+    expect(content.toString()).toMatchInlineSnapshot(`"SELECT +4;"`)
   })
 
   test('read (if not exists)', async () => {
