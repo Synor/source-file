@@ -1,7 +1,7 @@
 import { isSynorError, sortVersions, SynorError } from '@synor/core'
 import Debug from 'debug'
 import { lstatSync, readdir as fsReadDir, readFile as fsReadFile } from 'fs'
-import { extname, join as joinPath } from 'path'
+import { join as joinPath } from 'path'
 import { promisify } from 'util'
 import { getConfig } from './utils/get-config'
 import { readJavaScriptMigrationFile } from './utils/read-javascript-migration-file'
@@ -126,11 +126,10 @@ export const FileSourceEngine: SourceEngineFactory = (
     return Promise.resolve(migrationInfo)
   }
 
-  const read: SourceEngine['read'] = async ({ filename }) => {
+  const read: SourceEngine['read'] = async ({ filename, extension }) => {
     const migrationFilePath = joinPath(sourceConfig.pathname, filename)
-    const extension = extname(filename)
 
-    if (extension === '.js') {
+    if (extension === 'js') {
       return readJavaScriptMigrationFile(migrationFilePath)
     }
 

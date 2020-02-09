@@ -24,12 +24,14 @@ const firstVersion = '001'
 const lastVersion = '004'
 
 const migrationInfoParser: MigrationInfoParser = filename => {
-  const [version, type, title] = filename.split('--')
+  const [version, type, titleWithExtension] = filename.split('--')
+  const [title, extension] = titleWithExtension.split('.')
   return {
     filename,
     version,
     type: type as ReturnType<MigrationInfoParser>['type'],
-    title
+    title,
+    extension
   }
 }
 
@@ -143,8 +145,9 @@ describe('methods', () => {
     await expect(engine.get(firstVersion, 'do')).resolves
       .toMatchInlineSnapshot(`
             Object {
+              "extension": "sql",
               "filename": "001--do--one.sql",
-              "title": "one.sql",
+              "title": "one",
               "type": "do",
               "version": "001",
             }

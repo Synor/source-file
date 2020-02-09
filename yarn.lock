@@ -894,10 +894,10 @@
   dependencies:
     any-observable "^0.3.0"
 
-"@synor/core@^0.6.1":
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/@synor/core/-/core-0.6.1.tgz#16db5a677c6a046b467c455e45aa7ddb16828588"
-  integrity sha512-bJIFL6jLemkz9RoW0kcQXOypiDq4u9uHA3WXl5tV2D2lUTGkzPTNsZ63dparuInVpqwghERHNvkPHFxTeo9BFw==
+"@synor/core@^0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@synor/core/-/core-0.8.2.tgz#3842653c7a03855e196ddf1682692171276d7289"
+  integrity sha512-a3wxZKz1J0Gg6s07P+Pqd/vTvnIvO1SkeXJOVg5hbQ6+CMi767j8Y1FffDvTPWF6l7Lcs4Tv5UrBojFr1yF+/g==
   dependencies:
     debug "^4.1.1"
     lodash.defaultsdeep "^4.6.1"
@@ -1838,10 +1838,10 @@ concat-with-sourcemaps@^1.0.5:
   dependencies:
     source-map "^0.6.1"
 
-connection-string@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/connection-string/-/connection-string-3.1.0.tgz#459ac5cf04eb239ee179506c630be8ed3265218a"
-  integrity sha512-Gy+QoTYc09PqsrRoOZyKUYWL73ug/afVvQfRA3C5XIoYlm3TTUBAwjvOOP3AlGF3FHnZGY+nS98uKFjcj8RrPA==
+connection-string@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/connection-string/-/connection-string-3.1.1.tgz#871d81ec627ccc43eb8d621290e10a996598e733"
+  integrity sha512-d58cz9qYiz4lOw10EXjMadtElrb1TlPLDva5gwJELPzfJDe8MWEu10G6Y9ktgfMo8wP0LnREHjfGQr2ZEvbfcQ==
 
 console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   version "1.1.0"

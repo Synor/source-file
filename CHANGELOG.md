@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- ...
+- Bump dependency versions
 
 ## [0.3.0] - 2020-01-12
 
