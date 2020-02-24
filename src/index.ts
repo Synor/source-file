@@ -133,7 +133,9 @@ export const FileSourceEngine: SourceEngineFactory = (
       return readJavaScriptMigrationFile(migrationFilePath)
     }
 
-    return readFile(migrationFilePath)
+    const body = await readFile(migrationFilePath, { encoding: 'utf8' })
+
+    return { body }
   }
 
   return {

@@ -17,6 +17,7 @@ const migrationFiles: Record<string, string> = {
   '002--do--two.sql': 'SELECT +2;',
   '002--undo--two.sql': 'SELECT -2;',
   '003--do--three.sql': 'SELECT +3;',
+  '003--undo--three.js': `module.exports = { run() { return Promise.resolve() } }`,
   '004--do--four.js': `module.exports = { get body() { return Promise.resolve('SELECT +4;') } }`
 }
 
@@ -167,13 +168,31 @@ describe('methods', () => {
   test('read (if exists)', async () => {
     const info = await engine.get(firstVersion, 'do')
     const content = await engine.read(info!)
-    expect(content.toString()).toMatchInlineSnapshot(`"SELECT +1;"`)
+    expect(content).toMatchInlineSnapshot(`
+      Object {
+        "body": "SELECT +1;",
+      }
+    `)
   })
 
-  test('#1 read (if exists ; javascript file)', async () => {
+  test('#1 read (if exists ; javascript file; body)', async () => {
     const info = await engine.get(lastVersion, 'do')
     const content = await engine.read(info!)
-    expect(content.toString()).toMatchInlineSnapshot(`"SELECT +4;"`)
+    expect(content).toMatchInlineSnapshot(`
+      Object {
+        "body": "SELECT +4;",
+      }
+    `)
+  })
+
+  test('#1 read (if exists ; javascript file; run)', async () => {
+    const info = await engine.get('003', 'undo')
+    const content = await engine.read(info!)
+    expect(content).toMatchInlineSnapshot(`
+      Object {
+        "run": [Function],
+      }
+    `)
   })
 
   test('read (if not exists)', async () => {
