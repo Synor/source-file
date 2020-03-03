@@ -129,7 +129,8 @@ export const FileSourceEngine: SourceEngineFactory = (
   const read: SourceEngine['read'] = async ({ filename, extension }) => {
     const migrationFilePath = joinPath(sourceConfig.pathname, filename)
 
-    if (extension === 'js') {
+    // for TS files, synor configuration file needs to be written in TypeScript
+    if (['js', 'ts'].includes(extension)) {
       return readJavaScriptMigrationFile(migrationFilePath)
     }
 

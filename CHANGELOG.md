@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Add support for TS file
 - ...
 
 ## [0.5.0] - 2020-02-25
